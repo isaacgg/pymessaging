@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "pymessaging"
+version = "0.1.0"
+description = ""
+authors = ["isaacgg <isaac.gonzalezg91@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+pika = "^1.2.0"
+callee = "^0.3.1"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.4.3"
+flake8 = "^3.9.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
