@@ -1,11 +1,12 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 from dataclasses import field, dataclass
 from datetime import datetime
 from typing import Dict
 from uuid import UUID, uuid4
+import socket
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=False)
 class Message(ABC):
     message_id: UUID = field(default_factory=uuid4, init=False)
     occurred_on: datetime = field(default_factory=datetime.now, init=False)
@@ -16,8 +17,10 @@ class Message(ABC):
     aggregate: str = NotImplemented
     action: str = NotImplemented
     parameters: Dict = NotImplemented
+    meta_parameters: Dict = None
 
     def serialize(self) -> Dict:
+        self.meta_parameters = {} if self.meta_parameters is None else self.meta_parameters
         return {
             'data': {
                 "id": str(self.message_id),
@@ -28,10 +31,12 @@ class Message(ABC):
                     "parameters": {k: v for k, v in self.parameters.items()},
                 },
                 'meta': {
-                    "host": "host",
-                    "some other info": "info"
+                    {"host": socket.gethostname()} | {k: v for k, v in self.meta_parameters.items()}
                 },
             },
         }
 
     routing_key = f"{company}.{microservice}.{version}.{message_type}.{aggregate}.{action}"
+
+    def set_parameters(self, parameters):
+        self.parameters = parameters

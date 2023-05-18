@@ -1,12 +1,16 @@
 from abc import abstractmethod, ABC
+from typing import Dict, Callable
 
 
 class MessageConsumer(ABC):
-    @property
     @abstractmethod
-    def channel(self):
+    def declare_queue(self, queue_name: str, options: Dict) -> None:
         ...
 
     @abstractmethod
-    def consume(self):
+    def bind(self, binding_key: str, options: Dict) -> None:
+        ...
+
+    @abstractmethod
+    def consume_message(self, callback: Callable) -> None:
         ...
