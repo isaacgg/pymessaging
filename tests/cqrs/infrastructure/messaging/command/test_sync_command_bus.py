@@ -62,4 +62,4 @@ class TestSyncCommandBus(TestCase):
 
         self.assertRaises(CommandDoesNotExistError,
                           self.instance.dispatch,
-                          type(f"UnknownCommand", (Command,), {}))
+                          type("UnknownCommand", (Command,), {}))

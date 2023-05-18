@@ -15,9 +15,7 @@ class TestSyncQueryBus(TestCase):
         self.queries = {}
         for i in range(10):
             self.queries.update({type(f"Query{i}", (Query,), {}):
-                                  MagicMock(spec=type(f"QueryHandler{i}",
-                                                      (QueryHandler,), {}),
-                                            instance=True)})
+                                 MagicMock(spec=type(f"QueryHandler{i}", (QueryHandler,), {}), instance=True)})
 
     def tearDown(self):
         for c in list(self.instance.handlers.keys()):
@@ -63,4 +61,4 @@ class TestSyncQueryBus(TestCase):
 
         self.assertRaises(QueryDoesNotExistError,
                           self.instance.ask,
-                          type(f"UnknownQuery", (Query,), {}))
+                          type("UnknownQuery", (Query,), {}))
