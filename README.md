@@ -1,0 +1,1 @@
+# Pymessaging: Package to easily use cqrs and event sourcing in python
