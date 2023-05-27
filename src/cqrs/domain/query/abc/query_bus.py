@@ -3,10 +3,9 @@ from typing import Any
 
 from cqrs.domain.query.abc.query import Query
 from cqrs.domain.query.abc.query_handler import QueryHandler
-from shared.domain.singleton import SingletonABCMeta
 
 
-class QueryBus(ABC, metaclass=SingletonABCMeta):
+class QueryBus(ABC):
     @property
     @abstractmethod
     def handlers(self):

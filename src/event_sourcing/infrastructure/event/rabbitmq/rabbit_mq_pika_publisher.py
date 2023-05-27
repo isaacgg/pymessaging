@@ -8,7 +8,7 @@ from event_sourcing.domain.event.integration_event import IntegrationEvent
 from event_sourcing.domain.event.message_publisher import MessagePublisher
 
 
-class PikaPublisher(MessagePublisher):
+class RabbitMqPikaPublisher(MessagePublisher):
     exchange = None
 
     def __init__(self,

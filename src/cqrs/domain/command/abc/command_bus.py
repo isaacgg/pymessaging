@@ -2,10 +2,9 @@ from abc import abstractmethod, ABC
 
 from cqrs.domain.command.abc.command import Command
 from cqrs.domain.command.abc.command_handler import CommandHandler
-from shared.domain.singleton import SingletonABCMeta
 
 
-class CommandBus(ABC, metaclass=SingletonABCMeta):
+class CommandBus(ABC):
     @property
     @abstractmethod
     def handlers(self):

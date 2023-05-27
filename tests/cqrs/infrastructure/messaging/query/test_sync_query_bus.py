@@ -17,48 +17,42 @@ class TestSyncQueryBus(TestCase):
             self.queries.update({type(f"Query{i}", (Query,), {}):
                                  MagicMock(spec=type(f"QueryHandler{i}", (QueryHandler,), {}), instance=True)})
 
-    def tearDown(self):
-        for c in list(self.instance.handlers.keys()):
-            self.instance.remove_handler(c)
-
-        self.instance.handlers = {}  # This doesn't work :'(
-        self.instance.__class__._instances = {}
-        del self.instance
-
-        for c in self.queries.values():
-            c.reset_mock()
-
     def test_init(self):
-        self.instance = SyncQueryBus(self.queries)
+        instance = SyncQueryBus(self.queries)
 
-        for c1, c2 in zip(self.queries, self.instance.handlers.keys()):
+        for c1, c2 in zip(self.queries, instance.handlers.keys()):
             self.assertEqual(c1.__class__, c2.__class__)
-            self.assertEqual(self.queries[c1].__class__, self.instance.handlers[c2].__class__)
+            self.assertEqual(self.queries[c1].__class__, instance.handlers[c2].__class__)
+        self.assertEqual(len(instance.handlers), len(self.queries))
 
     def test_add_queries(self):
-        self.instance = SyncQueryBus()
+        instance = SyncQueryBus()
 
         for query, query_handler in self.queries.items():
-            self.instance.add_handler(query, query_handler)
+            instance.add_handler(query, query_handler)
 
-        for c1, c2 in zip(self.queries, self.instance.handlers):
+        for c1, c2 in zip(self.queries, instance.handlers):
             self.assertEqual(c1.__class__, c2.__class__)
-            self.assertEqual(self.queries[c1].__class__, self.instance.handlers[c2].__class__)
+            self.assertEqual(self.queries[c1].__class__, instance.handlers[c2].__class__)
+        self.assertEqual(len(instance.handlers), len(self.queries))
 
         for query, query_handler in self.queries.items():
-            self.assertRaises(QueryAlreadyExistsError, self.instance.add_handler, query, query_handler)
+            self.assertRaises(QueryAlreadyExistsError, instance.add_handler, query, query_handler)
 
     def test_dispatch_queries(self):
-        self.instance = SyncQueryBus(self.queries)
+        instance = SyncQueryBus(self.queries)
 
         for query in list(self.queries.keys()):
             expected_handler = self.queries[query]
-            self.instance.ask(query())
+            instance.ask(query())
+
             expected_handler.handle.assert_called_once_with(InstanceOf(query))
+        self.assertEqual(len(instance.handlers), len(self.queries))
 
     def test_query_does_not_exist(self):
-        self.instance = SyncQueryBus(self.queries)
+        instance = SyncQueryBus(self.queries)
 
+        self.assertEqual(len(instance.handlers), len(self.queries))
         self.assertRaises(QueryDoesNotExistError,
-                          self.instance.ask,
+                          instance.ask,
                           type("UnknownQuery", (Query,), {}))

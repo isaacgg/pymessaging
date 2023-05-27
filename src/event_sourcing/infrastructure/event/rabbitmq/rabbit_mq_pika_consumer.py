@@ -5,7 +5,7 @@ from pika.connection import Connection
 from event_sourcing.domain.event.message_consumer import MessageConsumer
 
 
-class RabbitMqConsumer(MessageConsumer):
+class RabbitMqPikaConsumer(MessageConsumer):
     def __init__(self, connection: Connection, exchange: str):
         self.connection = connection
         self.channel = self.connection.channel()

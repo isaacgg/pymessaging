@@ -8,9 +8,12 @@ from cqrs.domain.query.exceptions.query_does_not_exist_error import QueryDoesNot
 
 
 class SyncQueryBus(QueryBus):
-    handlers = {}
+    @property
+    def handlers(self):
+        return self._handlers
 
     def __init__(self, queries_map: Optional[Dict[Type[Query], Type[QueryHandler]]] = None):
+        self._handlers = {}
         if queries_map is not None:
             for query, query_handler in queries_map.items():
                 self.add_handler(query=query, query_handler=query_handler)
