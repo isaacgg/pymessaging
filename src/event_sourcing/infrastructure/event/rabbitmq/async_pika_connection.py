@@ -1,3 +1,5 @@
+import asyncio
+
 import pika
 
 
@@ -10,7 +12,23 @@ class ASyncPikaConnection:
         self.password = password
         self.heartbeat = heartbeat
 
-    def connect(self) -> pika.SelectConnection:
+    async def connect(self) -> pika.SelectConnection:
         credentials = pika.PlainCredentials(self.username, self.password)
         parameters = pika.ConnectionParameters(self.host, self.port, self.vhost, credentials, heartbeat=self.heartbeat)
-        return pika.SelectConnection(parameters)
+
+        connection = await self._create_connection(parameters)
+        return connection
+
+    async def _create_connection(self, parameters: pika.ConnectionParameters) -> pika.SelectConnection:
+        loop = asyncio.get_event_loop()
+        connection_future = loop.create_future()
+
+        def on_open(connection: pika.SelectConnection):
+            connection_future.set_result(connection)
+
+        connection = pika.SelectConnection(parameters, on_open_callback=on_open)
+        connection.ioloop.start()
+
+        await connection_future
+
+        return connection
