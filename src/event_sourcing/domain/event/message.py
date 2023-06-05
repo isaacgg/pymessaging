@@ -19,6 +19,9 @@ class Message(ABC):
     parameters: Dict = NotImplemented
     meta_parameters: Dict = None
 
+    def get_routing_key(self) -> str:
+        return f"{self.company}.{self.microservice}.{self.version}.{self.message_type}.{self.aggregate}.{self.action}"
+
     def serialize(self) -> Dict:
         self.meta_parameters = {} if self.meta_parameters is None else self.meta_parameters
         return {
@@ -30,13 +33,7 @@ class Message(ABC):
                     "id": self.aggregate,
                     "parameters": {k: v for k, v in self.parameters.items()},
                 },
-                'meta': {
-                    {"host": socket.gethostname()} | {k: v for k, v in self.meta_parameters.items()}
-                },
+                'meta': {"host": socket.gethostname()} | {k: v for k, v in self.meta_parameters.items()}
+                ,
             },
         }
-
-    routing_key = f"{company}.{microservice}.{version}.{message_type}.{aggregate}.{action}"
-
-    def set_parameters(self, parameters):
-        self.parameters = parameters

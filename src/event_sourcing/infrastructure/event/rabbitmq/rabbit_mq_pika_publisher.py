@@ -32,5 +32,5 @@ class RabbitMqPikaPublisher(MessagePublisher):
         for message in messages:
             self.connection.channel() \
                 .basic_publish(exchange=self.exchange,
-                               routing_key=message.routing_key,
+                               routing_key=message.get_routing_key(),
                                body=json.dumps(message.serialize()))
