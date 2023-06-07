@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pymessaging"
-version = "v0.1.3-beta"
+version = "v0.1.4-beta"
 description = ""
 authors = ["isaacgg <isaac.gonzalezg91@gmail.com>"]
 readme = "README.md"
