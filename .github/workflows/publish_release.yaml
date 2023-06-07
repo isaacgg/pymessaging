@@ -28,17 +28,11 @@ jobs:
       - name: Build package
         run: poetry build
 
-      - name: List files
-        run: ls -R
-
-      - name: Display installed dependencies
-        run: poetry show --tree
-
       - name: Run linters
         run: poetry run flake8
 
       - name: Run tests
-        run: poetry run pytest
+        run: poetry run pytest tests
 
       - name: Extract version from pyproject.toml
         id: extract_version
