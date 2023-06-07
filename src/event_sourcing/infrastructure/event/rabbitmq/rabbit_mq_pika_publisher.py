@@ -1,5 +1,5 @@
 import json
-from typing import List, Tuple, Union, Type
+from typing import Tuple, Union, Type
 
 from pika.connection import Connection
 
@@ -25,11 +25,11 @@ class RabbitMqPikaPublisher(MessagePublisher):
         self.connection.channel().exchange_declare(exchange=self.exchange,
                                                    exchange_type='topic')
 
-    def _is_processabe(self, domain_event: Union[DomainEvent, IntegrationEvent]) -> bool:
+    def is_publishable(self, domain_event: Union[DomainEvent, IntegrationEvent]) -> bool:
         return isinstance(domain_event, self.publishable_events)
 
-    def publish(self, messages: List[Union[DomainEvent, IntegrationEvent]]):
-        for message in messages:
+    def publish(self, message: Union[DomainEvent, IntegrationEvent]):
+        if self.is_publishable(message):
             self.connection.channel() \
                 .basic_publish(exchange=self.exchange,
                                routing_key=message.get_routing_key(),

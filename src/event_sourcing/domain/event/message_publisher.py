@@ -1,5 +1,4 @@
 from abc import abstractmethod, ABC
-from typing import List
 
 from event_sourcing.domain.event.message import Message
 
@@ -8,8 +7,12 @@ class MessagePublisher(ABC):
     @property
     @abstractmethod
     def exchange(self):
-        return
+        raise NotImplementedError("Method not implemented")
 
     @abstractmethod
-    def publish(self, messages: List[Message]):
-        return NotImplemented
+    def is_publishable(self, message: Message) -> bool:
+        raise NotImplementedError("Method not implemented")
+
+    @abstractmethod
+    def publish(self, messages: Message):
+        raise NotImplementedError("Method not implemented")
