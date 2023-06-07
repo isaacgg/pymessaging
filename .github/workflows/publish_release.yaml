@@ -1,0 +1,64 @@
+name: Publish Release
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          export PATH="$HOME/.poetry/bin:$PATH"
+
+      - name: Install dependencies
+        run: poetry install --no-root
+
+      - name: Install build dependencies
+        run: poetry install --no-root --dev
+
+      - name: Build package
+        run: poetry build
+
+      - name: Extract version from pyproject.toml
+        id: extract_version
+        run: echo "::set-output name=version::$(poetry version | cut -d ' ' -f 2)"
+
+      - name: Generate changelog
+        id: generate_changelog
+        run: |
+          git fetch --unshallow --tags
+          npm install -g conventional-changelog-cli
+          conventional-changelog -p angular -i CHANGELOG.md -s -r 0
+
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.extract_version.outputs.version }}
+          release_name: Release ${{ steps.extract_version.outputs.version }}
+          body_file: CHANGELOG.md
+
+      - name: Publish release
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./dist/pymessaging-${{ steps.extract_version.outputs.version }}.tar.gz
+          asset_name: pymessaging-${{ steps.extract_version.outputs.version }}.tar.gz
+          asset_content_type: application/x-gzip
