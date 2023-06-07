@@ -32,7 +32,8 @@ jobs:
         run: poetry run flake8
 
       - name: Run tests
-        run: poetry run pytest tests
+        working-directory: src
+        run: poetry run pytest ../tests
 
       - name: Extract version from pyproject.toml
         id: extract_version
