@@ -1,4 +1,4 @@
-from typing import Dict, Callable
+from typing import Callable
 
 from pika.connection import Connection
 
@@ -12,12 +12,12 @@ class RabbitMqPikaConsumer(MessageConsumer):
         self.exchange = exchange
         self.queue_name = None
 
-    def declare_queue(self, queue_name: str, options: Dict) -> None:
+    def declare_queue(self, queue_name: str, **kwargs) -> None:
         self.queue_name = queue_name
         self.channel.queue_declare(queue=self.queue_name)
 
-    def bind(self, binding_key: str, options: Dict) -> None:
-        self.channel.queue_bind(exchange=self.exchange, queue=self.queue_name, routing_key=options["routing_key"])
+    def bind(self, binding_key: str, **kwargs) -> None:
+        self.channel.queue_bind(exchange=self.exchange, queue=self.queue_name, routing_key=kwargs["routing_key"])
 
     def consume_message(self, callback: Callable) -> None:
         self.channel.basic_consume(queue=self.queue_name, on_message_callback=callback, auto_ack=True)
