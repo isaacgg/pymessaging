@@ -32,11 +32,9 @@ jobs:
         run: poetry run flake8
 
       - name: Run tests
-        run: |
-          echo "::add-path::$PWD/src"
-          echo "::add-path::$PWD/src/cqrs"
-          echo "::add-path::$PWD/src/event_sourcing"
-          poetry run pytest tests
+        env:
+          PYTHONPATH: ${{ github.workspace }}/src:${{ github.workspace }}/src/cqrs:${{ github.workspace }}/src/event_sourcing
+        run: poetry run pytest tests
 
       - name: Extract version from pyproject.toml
         id: extract_version
