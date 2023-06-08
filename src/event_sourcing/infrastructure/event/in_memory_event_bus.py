@@ -6,7 +6,7 @@ from event_sourcing.domain.event.integration_event import IntegrationEvent
 from event_sourcing.domain.event.message_publisher import MessagePublisher
 
 
-class RabbitMqEventBus(EventBus):
+class InMemoryEventBus(EventBus):
     def __init__(self, publishers: List[MessagePublisher]):
         self.publishers = publishers
 
