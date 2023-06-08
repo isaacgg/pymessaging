@@ -67,8 +67,9 @@ jobs:
         id: process_first_file
         run: |
           first_file=${{ steps.list_files.outputs.first_file }}
+          full_file_path=${{ github.workspace }}/dist/${{ steps.list_files.outputs.first_file }}
           echo "First file in dist folder: $first_file"
-          # Perform further processing with the first file as needed
+          echo "::set-output name=full_file_path::$full_file_path"
 
       - name: Publish release
         id: upload-release-asset
@@ -77,6 +78,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./dist/${{ steps.process_first_file.outputs.first_file }}
+          asset_path: ${{ steps.process_first_file.outputs.full_file_path }}
           asset_name: pymessaging-${{ steps.extract_version.outputs.version }}.tar.gz
           asset_content_type: application/x-gzip
+
