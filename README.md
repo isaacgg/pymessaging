@@ -3,8 +3,9 @@
 
 A powerful and intuitive Python library for implementing the CQRS (Command Query Responsibility Segregation) and event sourcing patterns. This library provides a robust foundation for building scalable and modular applications with clear separation of concerns.
 
-## Installation
+## Installation
 To install the library, simply run the following command:
+
 `pip install git+https://github.com/your-username/your-project.git`
 
 ## Usage
